@@ -1,0 +1,74 @@
+version: "2.1"
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: data_sync_mysql1
+    restart: always
+    volumes: 
+      - ${PWD}/mysql/etc/mysql:/etc/mysql
+      - ${PWD}/mysql/var/lib/mysql:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: data_sync_db
+    networks:
+      - logstash_network
+    ports: 
+      - 34501:3306
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+    container_name: data_sync_es
+    restart: always
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+      transport.host: 127.0.0.1
+      cluster.name: docker-cluster
+    networks:
+      - logstash_network 
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 34502:9300
+      - 34503:9200
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.0
+    container_name: data_sync_kibana
+    environment: 
+      ELASTICSEARCH_HOSTS: http://es:9200
+    ports:
+      - 34504:5601
+    networks:
+      - logstash_network
+    depends_on: 
+      - es
+  
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.0
+    container_name: data_sync_logstash
+    environment:
+      LOGSTASH_JDBC_URL: jdbc:mysql://mysql:3306/data_sync_db?useSSL=false
+      LOGSTASH_JDBC_DRIVER: com.mysql.jdbc.Driver
+      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: mysql-connector-java.jar
+      LOGSTASH_JDBC_USERNAME: root
+      LOGSTASH_JDBC_PASSWORD: 123456
+      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+      LOGSTASH_ELASTICSEARCH_HOST: http://es:9200
+    ports: 
+      - 34505:9600
+      - 34506:5044
+    networks:
+      - logstash_network
+    volumes: 
+      - ./logstash-input-jsbc.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on: 
+      - es
+      - kibana
+      - mysql
+volumes:
+  mysql:
+  elasticsearch_data:
+networks:
+  logstash_network:
