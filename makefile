@@ -8,5 +8,9 @@ mysql_down:
 
 es_up:
 	docker run -d --name data_sync_es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+
+remove_all:
+	docker stop data_sync_mysql1 data_sync_es data_sync_kibana data_sync_logstash && \
+	docker rm data_sync_mysql1 data_sync_es data_sync_kibana data_sync_logstash
 	
 	

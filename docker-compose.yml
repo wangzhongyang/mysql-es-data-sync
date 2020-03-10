@@ -54,7 +54,7 @@ services:
       LOGSTASH_JDBC_DRIVER_JAR_LOCATION: mysql-connector-java.jar
       LOGSTASH_JDBC_USERNAME: root
       LOGSTASH_JDBC_PASSWORD: 123456
-      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+      # LOGSTASH_JDBC_DRIVER_JAR_LOCATION: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
       LOGSTASH_ELASTICSEARCH_HOST: http://es:9200
     ports: 
       - 34505:9600
@@ -67,6 +67,7 @@ services:
       - es
       - kibana
       - mysql
+
 volumes:
   mysql:
   elasticsearch_data:
