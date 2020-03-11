@@ -51,10 +51,9 @@ services:
     environment:
       LOGSTASH_JDBC_URL: jdbc:mysql://mysql:3306/data_sync_db?useSSL=false
       LOGSTASH_JDBC_DRIVER: com.mysql.jdbc.Driver
-      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: mysql-connector-java.jar
+      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
       LOGSTASH_JDBC_USERNAME: root
-      LOGSTASH_JDBC_PASSWORD: 123456
-      # LOGSTASH_JDBC_DRIVER_JAR_LOCATION: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+      LOGSTASH_JDBC_PASSWORD: "123456"
       LOGSTASH_ELASTICSEARCH_HOST: http://es:9200
     ports: 
       - 34505:9600
@@ -62,7 +61,9 @@ services:
     networks:
       - logstash_network
     volumes: 
+      # - ./logstash-input-jsbc.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash-input-jsbc.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash-docker/mysql-connector-java-8.0.19.jar:/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
     depends_on: 
       - es
       - kibana
@@ -73,3 +74,6 @@ volumes:
   elasticsearch_data:
 networks:
   logstash_network:
+
+        # racking_column_type => "DATETIME"
+        # racking_column => "created_time"
