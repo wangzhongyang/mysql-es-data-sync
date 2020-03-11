@@ -74,6 +74,3 @@ volumes:
   elasticsearch_data:
 networks:
   logstash_network:
-
-        # racking_column_type => "DATETIME"
-        # racking_column => "created_time"
