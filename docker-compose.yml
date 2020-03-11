@@ -64,6 +64,7 @@ services:
       # - ./logstash-input-jsbc.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash-input-jsbc.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash-docker/mysql-connector-java-8.0.19.jar:/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+      - ./logstash-docker/logstash-none.yml:/usr/share/logstash/config/logstash.yml
     depends_on: 
       - es
       - kibana
